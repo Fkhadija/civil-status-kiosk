@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>البوابة الإلكترونية للحالة المدنية - Kiosk</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header class="kiosk-header">
+        <h1>البوابة الإلكترونية للحالة المدنية</h1>
+        <p>دليل المواطن في قضايا الحالة المدنية - المحكمة الابتدائية</p>
+    </header>
+
+    <main class="kiosk-container">
+        <section id="category-section" class="active-section">
+            <h2>1. يرجى اختيار نوع الخدمة:</h2>
+            <div id="categories-grid" class="btn-grid">
+                </div>
+        </section>
+
+        <section id="services-section" class="hidden-section">
+            <button id="back-to-categories" class="btn-secondary">🔙 رجوع للرئيسية</button>
+            <h2 id="selected-category-title">2. اختر الطلب:</h2>
+            <div id="services-grid" class="btn-grid">
+                </div>
+        </section>
+    </main>
+
+    <div id="requirements-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" id="close-modal">&times;</span>
+            <h2 id="modal-title">الوثائق المطلوبة</h2>
+            <ul id="requirements-list">
+                </ul>
+            <div class="modal-actions">
+                <button class="btn-primary print-btn" onclick="window.print()">🖨️ طباعة اللائحة</button>
+                <button class="btn-secondary" id="close-modal-btn">إغلاق</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

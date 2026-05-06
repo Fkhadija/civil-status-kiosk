@@ -1,0 +1,206 @@
+/* --- Variables de couleurs --- */
+:root {
+    --primary-color: #0056b3; /* Bleu officiel */
+    --secondary-color: #f8f9fa;
+    --text-color: #333;
+    --accent-color: #28a745; /* Vert pour la validation/impression */
+    --bg-color: #e9ecef;
+}
+
+/* --- Styles de base --- */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+/* --- En-tête --- */
+.kiosk-header {
+    background-color: var(--primary-color);
+    color: white;
+    text-align: center;
+    padding: 30px 20px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.kiosk-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+.kiosk-header p {
+    font-size: 1.2rem;
+    opacity: 0.9;
+}
+
+/* --- Conteneur principal --- */
+.kiosk-container {
+    flex: 1;
+    padding: 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+h2 {
+    font-size: 2rem;
+    margin-bottom: 30px;
+    color: var(--primary-color);
+    border-bottom: 3px solid var(--primary-color);
+    display: inline-block;
+    padding-bottom: 10px;
+}
+
+/* --- Grille de boutons --- */
+.btn-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+/* --- Boutons --- */
+button {
+    font-size: 1.5rem;
+    padding: 30px 20px;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    font-weight: bold;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+button:active {
+    transform: scale(0.98);
+}
+
+.btn-category {
+    background-color: white;
+    color: var(--primary-color);
+    border: 3px solid var(--primary-color);
+}
+
+.btn-service {
+    background-color: white;
+    color: #444;
+    border: 2px solid #ccc;
+}
+
+.btn-category:hover, .btn-service:hover {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.btn-primary {
+    background-color: var(--accent-color);
+    color: white;
+    padding: 15px 30px;
+    font-size: 1.2rem;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+    padding: 15px 30px;
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+}
+
+/* --- Gestion de l'affichage --- */
+.active-section {
+    display: block;
+    animation: fadeIn 0.5s ease-in;
+}
+
+.hidden-section {
+    display: none;
+}
+
+/* --- Modale (Pop-up) --- */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.6);
+}
+
+.modal-content {
+    background-color: white;
+    margin: 5% auto;
+    padding: 40px;
+    border-radius: 15px;
+    width: 80%;
+    max-width: 800px;
+    position: relative;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+.close-btn {
+    position: absolute;
+    top: 20px;
+    left: 30px;
+    font-size: 40px;
+    cursor: pointer;
+    color: #aaa;
+}
+
+.close-btn:hover {
+    color: black;
+}
+
+#requirements-list {
+    margin-top: 20px;
+    padding-right: 30px;
+    font-size: 1.4rem;
+    line-height: 2;
+}
+
+#requirements-list li {
+    margin-bottom: 15px;
+}
+
+.modal-actions {
+    margin-top: 40px;
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+}
+
+/* --- Animations --- */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Style pour l'impression (Ticket) --- */
+@media print {
+    body * { visibility: hidden; }
+    .modal-content, .modal-content * {
+        visibility: visible;
+    }
+    .modal-content {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        box-shadow: none;
+    }
+    .modal-actions, .close-btn {
+        display: none;
+    }
+}
