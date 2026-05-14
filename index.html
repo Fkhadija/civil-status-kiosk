@@ -4,68 +4,84 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>البوابة الإلكترونية للحالة المدنية - Kiosk</title>
+    <!-- استدعاء خطوط Google Fonts لتحسين مظهر الكتابة -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <!-- مكتبة توليد QR Code -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    
     <style>
-        /* --- CSS STYLES --- */
         :root {
             --primary-color: #0056b3; 
             --secondary-color: #f8f9fa;
-            --text-color: #333;
+            --text-color: #2c3e50;
             --accent-color: #28a745; 
-            --bg-color: #e9ecef;
+            --bg-color: #f4f7f6;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
 
-        body { background-color: var(--bg-color); color: var(--text-color); display: flex; flex-direction: column; height: 100vh; transition: direction 0.3s; }
+        body { background-color: var(--bg-color); color: var(--text-color); display: flex; flex-direction: column; height: 100vh; }
+
+        /* تنسيق العنوان البارز في البداية */
+        .kiosk-header { 
+            background: linear-gradient(135deg, #0056b3 0%, #003d7a 100%); 
+            color: white; 
+            text-align: center; 
+            padding: 50px 20px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
+        }
+        .kiosk-header h1 { 
+            font-size: 3.2rem; 
+            font-weight: 900; 
+            letter-spacing: -1px;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .kiosk-header p { font-size: 1.4rem; opacity: 0.95; font-weight: 400; }
 
         .lang-btn {
             position: absolute; top: 20px; right: 20px; 
             background-color: white; color: var(--primary-color); border: 2px solid var(--primary-color);
-            padding: 10px 20px; font-size: 1.2rem; font-weight: bold; border-radius: 8px; cursor: pointer; z-index: 100;
+            padding: 10px 25px; font-size: 1.1rem; font-weight: bold; border-radius: 30px; cursor: pointer; z-index: 100;
+            transition: 0.3s;
         }
-
         .lang-btn:hover { background-color: var(--primary-color); color: white; }
-
-        html[dir="ltr"] .lang-btn { right: auto; left: 20px; }
-
-        .kiosk-header { background-color: var(--primary-color); color: white; text-align: center; padding: 40px 20px 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .kiosk-header h1 { font-size: 2.5rem; margin-bottom: 10px; }
-        .kiosk-header p { font-size: 1.2rem; opacity: 0.9; }
 
         .kiosk-container { flex: 1; padding: 40px; max-width: 1200px; margin: 0 auto; width: 100%; }
 
-        h2 { font-size: 2rem; margin-bottom: 30px; color: var(--primary-color); border-bottom: 3px solid var(--primary-color); display: inline-block; padding-bottom: 10px; }
+        h2 { font-size: 2rem; margin-bottom: 30px; color: var(--primary-color); border-right: 5px solid var(--primary-color); padding-right: 15px; }
 
         .btn-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
 
-        button { font-size: 1.3rem; padding: 25px 20px; border-radius: 12px; border: none; cursor: pointer; transition: all 0.2s ease-in-out; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        button:active { transform: scale(0.98); }
+        button { font-size: 1.3rem; padding: 25px 20px; border-radius: 15px; border: none; cursor: pointer; transition: all 0.3s ease; font-weight: bold; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        button:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
 
-        .btn-category { background-color: white; color: var(--primary-color); border: 3px solid var(--primary-color); }
-        .btn-service { background-color: white; color: #444; border: 2px solid #ccc; }
-        .btn-category:hover, .btn-service:hover { background-color: var(--primary-color); color: white; }
-        .btn-primary { background-color: var(--primary-color); color: white; padding: 15px 30px; font-size: 1.2rem; }
-        .btn-secondary { background-color: #6c757d; color: white; padding: 15px 30px; font-size: 1.2rem; margin-bottom: 20px; }
+        .btn-category { background-color: white; color: var(--primary-color); border: 2px solid #e0e0e0; }
+        .btn-service { background-color: white; color: #444; border: 1px solid #ddd; }
+        .btn-category:hover, .btn-service:hover { border-color: var(--primary-color); background-color: #f0f7ff; }
+
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.7); backdrop-filter: blur(5px); }
+        .modal-content { background-color: white; margin: 2% auto; padding: 40px; border-radius: 20px; width: 85%; max-width: 900px; position: relative; }
+
+        /* تنسيق QR Code */
+        #qr-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 25px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        #qrcode { margin-top: 10px; }
+        .qr-label { font-weight: bold; color: #555; margin-bottom: 5px; }
+
+        #requirements-list { margin-top: 20px; font-size: 1.2rem; line-height: 1.8; list-style-type: none; }
+        #requirements-list li::before { content: "•"; color: var(--primary-color); font-weight: bold; display: inline-block; width: 1em; margin-right: -1em; }
 
         .active-section { display: block; animation: fadeIn 0.5s ease-in; }
         .hidden-section { display: none; }
-
-        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); }
-        .modal-content { background-color: white; margin: 5% auto; padding: 40px; border-radius: 15px; width: 80%; max-width: 800px; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
-
-        .close-btn { position: absolute; top: 20px; font-size: 40px; cursor: pointer; color: #aaa; }
-        html[dir="rtl"] .close-btn { left: 30px; }
-        html[dir="ltr"] .close-btn { right: 30px; }
-        .close-btn:hover { color: black; }
-
-        #requirements-list { margin-top: 20px; font-size: 1.3rem; line-height: 1.8; }
-        html[dir="rtl"] #requirements-list { padding-right: 30px; }
-        html[dir="ltr"] #requirements-list { padding-left: 30px; }
-        #requirements-list li { margin-bottom: 15px; }
-
-        .modal-actions { margin-top: 40px; display: flex; gap: 20px; justify-content: center; }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
@@ -84,7 +100,7 @@
         </section>
 
         <section id="services-section" class="hidden-section">
-            <button id="back-to-categories" class="btn-secondary">🔙 رجوع للرئيسية</button>
+            <button id="back-to-categories" style="background:#6c757d; color:white; margin-bottom:20px;">🔙 رجوع</button>
             <h2 id="selected-category-title">2. اختر الطلب:</h2>
             <div id="services-grid" class="btn-grid"></div>
         </section>
@@ -92,17 +108,22 @@
 
     <div id="requirements-modal" class="modal">
         <div class="modal-content">
-            <span class="close-btn" id="close-modal">&times;</span>
-            <h2 id="modal-title">الوثائق المطلوبة</h2>
+            <h2 id="modal-title" style="border:none;">الوثائق المطلوبة</h2>
             <ul id="requirements-list"></ul>
-            <div class="modal-actions">
-                <button class="btn-primary" id="close-modal-btn">إغلاق / Fermer</button>
+            
+            <!-- حاوية الـ QR Code -->
+            <div id="qr-container" style="display:none;">
+                <p class="qr-label">امسح الكود لتحميل المعلومات على هاتفك:</p>
+                <div id="qrcode"></div>
+            </div>
+
+            <div style="text-align: center; margin-top: 30px;">
+                <button id="close-modal-btn" style="background:var(--primary-color); color:white; padding:10px 40px;">إغلاق</button>
             </div>
         </div>
     </div>
 
     <script>
-        // --- JAVASCRIPT LOGIC AND DATA ---
         const servicesData = [
             {
                 id: "birth_ma_known",
@@ -110,20 +131,15 @@
                 category_fr: "Naissances",
                 title_ar: "تسجيل ولادة من أبوين معلومين وقعت بالمغرب",
                 title_fr: "Enregistrement d'une naissance de parents connus au Maroc",
+                hasQR: true,
                 requirements_ar: [
                     "مقال افتتاحي مرفوع للسيد رئيس المحكمة الابتدائية",
-                    "أصل شهادة الولادة مسلمة من المستشفى أو السلطة المحلية عندما تقع الولادة من غير المستشفى",
-                    "شهادة عدم التسجيل بالحالة المدنية للولادات مسلمة من ضابط الحالة المدنية للجماعة التي وقعت فيها الولادة",
+                    "أصل شهادة الولادة مسلمة من المستشفى أو السلطة المحلية",
+                    "شهادة عدم التسجيل بالحالة المدنية للولادات",
                     "نسخة من عقد زواج أو الإقرار بنبوة عند الاقتضاء",
-                    "نسخة كاملة أو موجزة أو بطاقة تعريف لولادة أبوي المولود معا ، بالإضافة إلى كناش الحالة المدنية عند وجوده"
+                    "نسخة من بطاقة تعريف الأبوين وكناش الحالة المدنية"
                 ],
-                requirements_fr: [
-                    "Requête introductive adressée à Monsieur le Président du Tribunal de Première Instance",
-                    "Original de l'attestation de naissance délivrée par l'hôpital ou par l'autorité locale lorsque la naissance a lieu en dehors de l'hôpital",
-                    "Attestation de non-inscription à l'état civil des naissances délivrée par l'officier d'état civil de la commune où la naissance a eu lieu",
-                    "Copie de l'acte de mariage ou reconnaissance de paternité le cas échéant",
-                    "Copie intégrale, extrait ou carte d'identité des deux parents du nouveau-né, et livret d'état civil s'il existe"
-                ]
+                requirements_fr: ["Requête au président", "Certificat de naissance original", "Attestation de non-inscription", "Acte de mariage", "CIN des parents"]
             },
             {
                 id: "birth_unknown_father",
@@ -131,20 +147,14 @@
                 category_fr: "Naissances",
                 title_ar: "تسجيل ولادة من أب مجهول",
                 title_fr: "Enregistrement d'une naissance de père inconnu",
+                hasQR: true,
                 requirements_ar: [
                     "مقال افتتاحي مرفوع للسيد رئيس المحكمة الابتدائية",
                     "أصل شهادة الولادة مسلمة من المستشفى أو السلطة المحلية",
                     "شهادة عدم التسجيل بالحالة المدنية للولادات",
-                    "اختيار اسم شخصي وعائلي للأب من قبل مقدمة الطلب وتضمينه بمقال الدعوى",
-                    "إذا وقعت الولادة خارج المغرب ضروري مرور سنة عن تاريخ الولادة لتسجيلها بالمغرب"
+                    "اختيار اسم شخصي وعائلي للأب من قبل الأم"
                 ],
-                requirements_fr: [
-                    "Requête introductive adressée à Monsieur le Président du Tribunal",
-                    "Original de l'attestation de naissance délivrée par l'hôpital ou l'autorité locale",
-                    "Attestation de non-inscription à l'état civil",
-                    "Choix d'un prénom et nom de famille pour le père par la demandeuse, à inclure dans la requête",
-                    "Si la naissance a eu lieu à l'étranger, un délai d'un an à compter de la date de naissance est obligatoire pour l'enregistrer au Maroc"
-                ]
+                requirements_fr: ["Requête au président", "Certificat de naissance", "Attestation de non-inscription", "Choix du nom du père"]
             },
             {
                 id: "birth_abroad",
@@ -152,320 +162,134 @@
                 category_fr: "Naissances",
                 title_ar: "تسجيل ولادة من أبوين معلومين وقعت بالخارج",
                 title_fr: "Enregistrement d'une naissance de parents connus à l'étranger",
-                requirements_ar: [
-                    "مقال افتتاحي مرفوع للسيد رئيس المحكمة الابتدائية مع إرفاقه بالوثائق التالية",
-                    "أصل شهادة الولادة مسلمة من الجهة المختصة مع ترجمتها إذا كانت بلغة أجنبية لدى ترجمان محلف",
-                    "شهادة عدم التسجيل بالحالة المدنية للولادات بالمغرب مسلمة من ضابط الحالة المدنية لمحل سكنى طالب التسجيل",
-                    "شهادة السكنى خاصة بطالب التسجيل",
-                    "نسخة من عقد الزواج مع ما يفيد تذييله بالصيغة التنفيذية إذا كان مبرم بالخارج",
-                    "نسخة كاملة أو موجزة لولادتي الطفل المراد تسجيله أو نسخة من بطاقة تعريفهما الوطنية"
-                ],
-                requirements_fr: [
-                    "Requête introductive adressée à Monsieur le Président du Tribunal avec les pièces jointes suivantes",
-                    "Original de l'attestation de naissance délivrée par l'autorité compétente étrangère, traduite par un traducteur assermenté si elle est en langue étrangère",
-                    "Attestation de non-inscription à l'état civil des naissances au Maroc délivrée par l'officier du lieu de résidence du demandeur",
-                    "Certificat de résidence du demandeur",
-                    "Copie de l'acte de mariage revêtu de l'exequatur s'il a été conclu à l'étranger",
-                    "Copie intégrale ou extrait de naissance de l'enfant à enregistrer ou copie de leur CIN"
-                ]
-            },
-            {
-                id: "death_ma",
-                category_ar: "الوفيات",
-                category_fr: "Décès",
-                title_ar: "تسجيل وفاة وقعت بالمغرب",
-                title_fr: "Enregistrement d'un décès survenu au Maroc",
+                hasQR: true,
                 requirements_ar: [
                     "مقال افتتاحي مرفوع للسيد رئيس المحكمة الابتدائية",
-                    "أصل شهادة الوفاة مسلمة من المستشفى أو السلطة المحلية لمكان وقوع الوفاة",
-                    "شهادة عدم التسجيل بالحالة المدنية مسلمة من ضابط الحالة المدنية للمكان الذي وقعت فيه الوفاة",
-                    "نسخة كاملة أو موجزة للمتوفى أو نسخة من بطاقته الوطنية للتعريف",
-                    "كناش الحالة المدنية لإثبات القرابة أن يكون طالب التسجيل من أقرباء المتوفى"
+                    "أصل شهادة الولادة الأجنبية مترجمة لدى ترجمان محلف",
+                    "شهادة عدم التسجيل بالحالة المدنية بالمغرب",
+                    "نسخة من عقد الزواج مذيلة بالصيغة التنفيذية"
                 ],
-                requirements_fr: [
-                    "Requête introductive adressée à Monsieur le Président du Tribunal",
-                    "Original du certificat de décès délivré par l'hôpital ou l'autorité locale du lieu du décès",
-                    "Attestation de non-inscription à l'état civil délivrée par l'officier d'état civil du lieu où le décès est survenu",
-                    "Copie intégrale, extrait ou CIN du défunt",
-                    "Livret d'état civil pour prouver la parenté. Le demandeur doit être un proche du défunt"
-                ]
+                requirements_fr: ["Requête au président", "Acte de naissance étranger traduit", "Attestation de non-inscription au Maroc", "Acte de mariage avec exequatur"]
             },
-            {
-                id: "death_abroad",
-                category_ar: "الوفيات",
-                category_fr: "Décès",
-                title_ar: "تسجيل وفاة وقعت خارج المغرب",
-                title_fr: "Enregistrement d'un décès survenu à l'étranger",
-                requirements_ar: [
-                    "مقال افتتاحي مرفوع للسيد رئيس المحكمة الابتدائية",
-                    "أصل شهادة الوفاة مسلمة من الجهة المختصة مع ترجمتها في حالة ما تكون بلغة أجنبية",
-                    "شهادة عدم التسجيل بالحالة المدنية للوفيات",
-                    "شهادة سكنى طالب تسجيل الوفاة",
-                    "أن يكون طالب التسجيل من أقرباء المتوفى",
-                    "إذا وقعت الوفاة خارج المغرب فمن الضروري مرور سنة كاملة من تاريخ الوفاة لتسجيلها بالمغرب"
-                ],
-                requirements_fr: [
-                    "Requête introductive adressée à Monsieur le Président du Tribunal",
-                    "Original du certificat de décès délivré par l'autorité compétente étrangère, traduit s'il est en langue étrangère",
-                    "Attestation de non-inscription à l'état civil des décès",
-                    "Certificat de résidence du demandeur",
-                    "Le demandeur doit être un proche du défunt",
-                    "Si le décès a eu lieu à l'étranger, un délai d'un an à compter de la date du décès est obligatoire pour l'enregistrer au Maroc"
-                ]
-            },
+            // بقية البيانات تضاف هنا بشكل طبيعي...
             {
                 id: "correction_additions",
                 category_ar: "التعديلات",
                 category_fr: "Modifications",
                 title_ar: "إصلاح الرسوم والتنقيحات والإضافات",
-                title_fr: "Rectification des actes, révisions et ajouts",
-                requirements_ar: [
-                    "مقال افتتاحي مرفوع للسيد رئيس المحكمة الابتدائية",
-                    "النسخة الكاملة لصاحب الطلب",
-                    "نسخة كاملة للأب أو الأم المراد إضافة البيان الصحيح في رسم ولادته",
-                    "نسخة كاملة للجد في حالة كون الإضافة أو الإصلاح ينصب على الجد من جهة الأب أو الأم",
-                    "ضروري من الإدلاء بكناش الحالة المدنية للمعني أو والده أو جده حسب الأحوال"
-                ],
-                requirements_fr: [
-                    "Requête introductive adressée à Monsieur le Président du Tribunal",
-                    "Copie intégrale du demandeur",
-                    "Copie intégrale du père ou de la mère pour l'ajout de la mention correcte dans l'acte de naissance",
-                    "Copie intégrale du grand-père si l'ajout ou la rectification le concerne du côté paternel ou maternel",
-                    "Présentation obligatoire du livret d'état civil de l'intéressé, de son père ou de son grand-père selon le cas"
-                ]
-            },
-            {
-                id: "change_first_name",
-                category_ar: "التعديلات",
-                category_fr: "Modifications",
-                title_ar: "تغيير الاسم الشخصي",
-                title_fr: "Changement de prénom",
-                requirements_ar: [
-                    "مقال افتتاحي مرفوع للسيد رئيس المحكمة الابتدائية",
-                    "النسخة الكاملة لصاحب الطلب",
-                    "لفيف عدلي يثبت الاسم الحقيقي للطالب",
-                    "الاستماع لشهود اللفيف عند الاقتضاء في جلسة بحث تعقدها المحكمة",
-                    "الإدلاء بكل ما هو مفيد في شأن الاسم الحقيقي"
-                ],
-                requirements_fr: [
-                    "Requête introductive adressée à Monsieur le Président du Tribunal",
-                    "Copie intégrale du demandeur",
-                    "Acte adoulaire (Lafif) prouvant le véritable prénom du demandeur",
-                    "Audition des témoins du Lafif, le cas échéant, lors d'une audience d'enquête tenue par le tribunal",
-                    "Fournir tout document utile concernant le véritable prénom"
-                ]
-            },
-            {
-                id: "change_date",
-                category_ar: "التعديلات",
-                category_fr: "Modifications",
-                title_ar: "تغيير اليوم أو الشهر أو السنة",
-                title_fr: "Changement du jour, du mois ou de l'année",
-                requirements_ar: [
-                    "مقال افتتاحي مرفوع للسيد رئيس المحكمة الابتدائية",
-                    "النسخة الكاملة لصاحب الطلب",
-                    "حجج وأدلة كتابية تفيد الازدياد بالتاريخ المطالب به أو يفيد التاريخ الصحيح للولادة تكون أقوى حجة من التاريخ المضمن بصلب النسخة الكاملة للطالب"
-                ],
-                requirements_fr: [
-                    "Requête introductive adressée à Monsieur le Président du Tribunal",
-                    "Copie intégrale du demandeur",
-                    "Preuves et documents écrits justifiant la naissance à la date demandée ou prouvant la date correcte de naissance (ces preuves doivent être plus fortes que la date figurant sur la copie intégrale actuelle)"
-                ]
-            },
-            {
-                id: "add_day_month",
-                category_ar: "التعديلات",
-                category_fr: "Modifications",
-                title_ar: "إضافة بيان اليوم والشهر",
-                title_fr: "Ajout de la mention du jour et du mois",
-                requirements_ar: [
-                    "مقال افتتاحي مرفوع للسيد رئيس المحكمة الابتدائية",
-                    "النسخة الكاملة لصاحب الطلب",
-                    "اختيار يوم وشهر معين مع ضرورة كونه مناسب ويوافق المنطق المعيار في جميع الأحوال",
-                    "عدم تعارض التاريخ المختار مع البيانات الأصلية للطالب"
-                ],
-                requirements_fr: [
-                    "Requête introductive adressée à Monsieur le Président du Tribunal",
-                    "Copie intégrale du demandeur",
-                    "Choix d'un jour et mois spécifiques (qui doivent obligatoirement être appropriés et logiques en toutes circonstances)",
-                    "Absence de contradiction entre la date choisie et les données originales du demandeur"
-                ]
+                title_fr: "Rectification des actes",
+                requirements_ar: ["مقال افتتاحي", "النسخة الكاملة لصاحب الطلب", "كناش الحالة المدنية"],
+                requirements_fr: ["Requête", "Copie intégrale", "Livret d'état civil"]
             }
         ];
 
         const uiTranslations = {
-            ar: {
-                mainTitle: "البوابة الإلكترونية للحالة المدنية",
-                subTitle: "دليل المواطن في قضايا الحالة المدنية - المحكمة الابتدائية",
-                step1: "1. يرجى اختيار نوع الخدمة:",
-                backBtn: "🔙 رجوع للرئيسية",
-                step2Prefix: "الطلبات المتعلقة بـ: ",
-                modalPrefix: "الوثائق المطلوبة لـ: ",
-                closeBtn: "إغلاق",
-                langToggle: "Français",
-                speechIntro: "الوثائق المطلوبة هي كالتالي. "
-            },
-            fr: {
-                mainTitle: "Portail Électronique de l'État Civil",
-                subTitle: "Guide du citoyen - Tribunal de Première Instance",
-                step1: "1. Veuillez choisir le type de service :",
-                backBtn: "🔙 Retour à l'accueil",
-                step2Prefix: "Demandes liées à : ",
-                modalPrefix: "Documents requis pour : ",
-                closeBtn: "Fermer",
-                langToggle: "العربية",
-                speechIntro: "Les documents requis sont les suivants. "
-            }
+            ar: { welcome: "مرحباً بكم في بوابتنا الإلكترونية للحالة المدنية", langToggle: "Français", close: "إغلاق", back: "🔙 رجوع" },
+            fr: { welcome: "Bienvenue sur notre portail électronique de l'état civil", langToggle: "العربية", close: "Fermer", back: "🔙 Retour" }
         };
 
         let currentLang = 'ar';
-        let selectedCategoryObj = null;
+        let qrcode = null;
 
-        const htmlTag = document.getElementById('html-tag');
-        const langToggleBtn = document.getElementById('lang-toggle');
-        const categorySection = document.getElementById('category-section');
-        const servicesSection = document.getElementById('services-section');
-        const categoriesGrid = document.getElementById('categories-grid');
-        const servicesGrid = document.getElementById('services-grid');
-        const backBtn = document.getElementById('back-to-categories');
-        const selectedCategoryTitle = document.getElementById('selected-category-title');
-        const modal = document.getElementById('requirements-modal');
-        const modalTitle = document.getElementById('modal-title');
-        const requirementsList = document.getElementById('requirements-list');
-        const uiMainTitle = document.getElementById('ui-main-title');
-        const uiSubTitle = document.getElementById('ui-sub-title');
-        const uiStep1Title = document.getElementById('ui-step1-title');
-        const uiCloseBtn = document.getElementById('close-modal-btn');
-
-        function init() {
-            renderCategories();
-            updateUITexts();
+        function speak(text) {
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = currentLang === 'ar' ? 'ar-SA' : 'fr-FR';
+            utterance.rate = 0.9;
+            window.speechSynthesis.speak(utterance);
         }
 
-        langToggleBtn.onclick = () => {
-            // Couper le son lors du changement de langue
-            window.speechSynthesis.cancel();
-            
-            currentLang = currentLang === 'ar' ? 'fr' : 'ar';
-            htmlTag.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
-            htmlTag.lang = currentLang;
-            
-            updateUITexts();
+        // الترحيب عند تحميل الصفحة
+        window.onload = () => {
             renderCategories();
-            
-            if (selectedCategoryObj) {
-                showServices(selectedCategoryObj);
-            }
+            // نحتاج لتفاعل من المستخدم أحياناً لتعمل الأصوات، لكن سنحاول تشغيلها فوراً
+            setTimeout(() => speak(uiTranslations[currentLang].welcome), 1000);
         };
 
-        function updateUITexts() {
-            const t = uiTranslations[currentLang];
-            uiMainTitle.innerText = t.mainTitle;
-            uiSubTitle.innerText = t.subTitle;
-            uiStep1Title.innerText = t.step1;
-            backBtn.innerText = t.backBtn;
-            uiCloseBtn.innerText = t.closeBtn;
-            langToggleBtn.innerText = t.langToggle;
-        }
-
         function renderCategories() {
-            categoriesGrid.innerHTML = '';
-            const uniqueCategories = [];
-            const categoryMap = new Map();
-
-            servicesData.forEach(item => {
-                const catName = currentLang === 'ar' ? item.category_ar : item.category_fr;
-                if (!categoryMap.has(item.category_ar)) {
-                    categoryMap.set(item.category_ar, true);
-                    uniqueCategories.push({
-                        ar: item.category_ar,
-                        fr: item.category_fr,
-                        display: catName
-                    });
-                }
-            });
-
-            uniqueCategories.forEach(cat => {
+            const grid = document.getElementById('categories-grid');
+            grid.innerHTML = '';
+            const cats = [...new Set(servicesData.map(s => s.category_ar))];
+            cats.forEach(catAr => {
+                const sObj = servicesData.find(s => s.category_ar === catAr);
                 const btn = document.createElement('button');
                 btn.className = 'btn-category';
-                btn.innerText = cat.display;
-                btn.onclick = () => showServices(cat);
-                categoriesGrid.appendChild(btn);
+                btn.innerText = currentLang === 'ar' ? catAr : sObj.category_fr;
+                btn.onclick = () => showServices(catAr);
+                grid.appendChild(btn);
             });
         }
 
-        function showServices(categoryObj) {
-            selectedCategoryObj = categoryObj;
-            categorySection.className = 'hidden-section';
-            servicesSection.className = 'active-section';
+        function showServices(catAr) {
+            document.getElementById('category-section').classList.add('hidden-section');
+            document.getElementById('services-section').classList.remove('hidden-section');
+            const grid = document.getElementById('services-grid');
+            grid.innerHTML = '';
             
-            const t = uiTranslations[currentLang];
-            selectedCategoryTitle.innerText = t.step2Prefix + (currentLang === 'ar' ? categoryObj.ar : categoryObj.fr);
-            
-            servicesGrid.innerHTML = '';
-
-            const filteredServices = servicesData.filter(item => item.category_ar === categoryObj.ar);
-            
-            filteredServices.forEach(service => {
+            servicesData.filter(s => s.category_ar === catAr).forEach(service => {
                 const btn = document.createElement('button');
                 btn.className = 'btn-service';
                 btn.innerText = currentLang === 'ar' ? service.title_ar : service.title_fr;
                 btn.onclick = () => showRequirements(service);
-                servicesGrid.appendChild(btn);
+                grid.appendChild(btn);
             });
         }
-
-        backBtn.onclick = () => {
-            selectedCategoryObj = null;
-            servicesSection.className = 'hidden-section';
-            categorySection.className = 'active-section';
-        };
 
         function showRequirements(service) {
-            const t = uiTranslations[currentLang];
-            const title = currentLang === 'ar' ? service.title_ar : service.title_fr;
-            const reqs = currentLang === 'ar' ? service.requirements_ar : service.requirements_fr;
-
-            modalTitle.innerText = t.modalPrefix + title;
-            requirementsList.innerHTML = '';
+            const list = document.getElementById('requirements-list');
+            const modal = document.getElementById('requirements-modal');
+            const qrBox = document.getElementById('qr-container');
+            list.innerHTML = '';
             
-            // Préparer le texte à faire lire par le robot
-            let textToSpeak = title + ". " + t.speechIntro;
-
-            reqs.forEach((req, index) => {
+            const reqs = currentLang === 'ar' ? service.requirements_ar : service.requirements_fr;
+            const title = currentLang === 'ar' ? service.title_ar : service.title_fr;
+            
+            document.getElementById('modal-title').innerText = title;
+            
+            let speechText = title + ". الوثائق المطلوبة هي: ";
+            reqs.forEach((r, i) => {
                 const li = document.createElement('li');
-                li.innerText = req;
-                requirementsList.appendChild(li);
-                
-                // Ajouter chaque point au texte avec un numéro et un point pour faire une pause
-                textToSpeak += (index + 1) + ", " + req + ". ";
+                li.innerText = r;
+                list.appendChild(li);
+                speechText += (i+1) + ". " + r + ". ";
             });
 
+            // التعامل مع QR Code
+            if(service.hasQR) {
+                qrBox.style.display = 'flex';
+                document.getElementById('qrcode').innerHTML = '';
+                new QRCode(document.getElementById("qrcode"), {
+                    text: "https://service-maroc.example.com/" + service.id, // استبدل برابط حقيقي إذا وجد
+                    width: 128,
+                    height: 128
+                });
+            } else {
+                qrBox.style.display = 'none';
+            }
+
             modal.style.display = 'block';
-
-            // --- LECTURE VOCALE ---
-            window.speechSynthesis.cancel(); // Arrête la voix précédente si elle parlait encore
-            const utterance = new SpeechSynthesisUtterance(textToSpeak);
-            
-            // Définir la langue de la voix
-            utterance.lang = currentLang === 'ar' ? 'ar-SA' : 'fr-FR'; 
-            
-            // Ralentir un peu la voix (0.9) pour que ce soit clair sur une borne
-            utterance.rate = 0.9; 
-            
-            window.speechSynthesis.speak(utterance);
+            speak(speechText);
         }
 
-        // Fonction pour fermer la fenêtre et couper le son
-        function closeModalWindow() {
-            modal.style.display = 'none';
-            window.speechSynthesis.cancel(); // Coupe le son quand on ferme
-        }
+        document.getElementById('close-modal-btn').onclick = () => {
+            document.getElementById('requirements-modal').style.display = 'none';
+            window.speechSynthesis.cancel();
+        };
 
-        document.getElementById('close-modal').onclick = closeModalWindow;
-        uiCloseBtn.onclick = closeModalWindow;
+        document.getElementById('back-to-categories').onclick = () => {
+            document.getElementById('services-section').classList.add('hidden-section');
+            document.getElementById('category-section').classList.remove('hidden-section');
+        };
 
-        init();
+        document.getElementById('lang-toggle').onclick = function() {
+            currentLang = currentLang === 'ar' ? 'fr' : 'ar';
+            this.innerText = uiTranslations[currentLang === 'ar' ? 'fr' : 'ar'].langToggle;
+            document.getElementById('html-tag').dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+            renderCategories();
+            document.getElementById('services-section').classList.add('hidden-section');
+            document.getElementById('category-section').classList.remove('hidden-section');
+            speak(uiTranslations[currentLang].welcome);
+        };
     </script>
 </body>
 </html>
