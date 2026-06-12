@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>البوابة الإلكترونية للحالة المدنية - Kiosk</title>
+    <title>البوابة الإلكترونية للحالة المدنية - عمالة خريبكة</title>
     <style>
         /* --- CSS STYLES --- */
         :root {
@@ -11,58 +11,101 @@
             --secondary-color: #f8f9fa;
             --text-color: #333;
             --accent-color: #28a745; 
-            --bg-color: #e9ecef;
+            --bg-color: #ffffff;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
 
         body { background-color: var(--bg-color); color: var(--text-color); display: flex; flex-direction: column; height: 100vh; transition: direction 0.3s; }
 
+        /* --- En-tête --- */
+        .kiosk-header { background-color: var(--primary-color); color: white; text-align: center; padding: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); position: relative; }
+        .kiosk-header h1 { font-size: 2rem; margin-bottom: 5px; }
+        .kiosk-header p { font-size: 1.1rem; opacity: 0.9; }
+
+        /* Bouton Langue */
         .lang-btn {
             position: absolute; top: 20px; right: 20px; 
-            background-color: white; color: var(--primary-color); border: 2px solid var(--primary-color);
-            padding: 10px 20px; font-size: 1.2rem; font-weight: bold; border-radius: 8px; cursor: pointer; z-index: 100;
+            background-color: white; color: var(--primary-color); border: 2px solid white;
+            padding: 8px 15px; font-size: 1.1rem; font-weight: bold; border-radius: 8px; cursor: pointer; z-index: 100;
         }
-
-        .lang-btn:hover { background-color: var(--primary-color); color: white; }
-
+        .lang-btn:hover { background-color: var(--secondary-color); color: var(--primary-color); }
         html[dir="ltr"] .lang-btn { right: auto; left: 20px; }
 
-        .kiosk-header { background-color: var(--primary-color); color: white; text-align: center; padding: 40px 20px 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .kiosk-header h1 { font-size: 2.5rem; margin-bottom: 10px; }
-        .kiosk-header p { font-size: 1.2rem; opacity: 0.9; }
-
+        /* --- Conteneur principal --- */
         .kiosk-container { flex: 1; padding: 40px; max-width: 1200px; margin: 0 auto; width: 100%; }
 
         h2 { font-size: 2rem; margin-bottom: 30px; color: var(--primary-color); border-bottom: 3px solid var(--primary-color); display: inline-block; padding-bottom: 10px; }
 
-        .btn-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        /* --- Page d'accueil (Landing Page) --- */
+        .landing-layout {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 60vh;
+            gap: 20px;
+        }
+        .landing-logo {
+            max-width: 250px; /* Taille du logo */
+            align-items: center;
+            height: auto;
+            margin-bottom: 10px;
+        }
+        .landing-title {
+            font-size: 3.5rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        .landing-desc {
+            font-size: 1.8rem;
+            color: #555;
+            max-width: 800px;
+            line-height: 1.6;
+            margin-bottom: 50px;
+        }
+        .start-btn {
+            font-size: 2rem;
+            padding: 20px 80px;
+            border-radius: 50px;
+            background-color: var(--accent-color);
+            color: white;
+            box-shadow: 0 10px 20px rgba(40, 167, 69, 0.3);
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7); }
+            70% { transform: scale(1.05); box-shadow: 0 0 0 20px rgba(40, 167, 69, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(40, 167, 69, 0); }
+        }
 
+        /* --- Grille et Boutons --- */
+        .btn-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
         button { font-size: 1.3rem; padding: 25px 20px; border-radius: 12px; border: none; cursor: pointer; transition: all 0.2s ease-in-out; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         button:active { transform: scale(0.98); }
-
         .btn-category { background-color: white; color: var(--primary-color); border: 3px solid var(--primary-color); }
         .btn-service { background-color: white; color: #444; border: 2px solid #ccc; }
         .btn-category:hover, .btn-service:hover { background-color: var(--primary-color); color: white; }
         .btn-primary { background-color: var(--primary-color); color: white; padding: 15px 30px; font-size: 1.2rem; }
         .btn-secondary { background-color: #6c757d; color: white; padding: 15px 30px; font-size: 1.2rem; margin-bottom: 20px; }
 
-        .active-section { display: block; animation: fadeIn 0.5s ease-in; }
-        .hidden-section { display: none; }
+        /* --- Sections d'affichage --- */
+        .active-section { display: flex; flex-direction: column; animation: fadeIn 0.5s ease-in; }
+        .hidden-section { display: none !important; }
 
+        /* --- Modale --- */
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); }
         .modal-content { background-color: white; margin: 5% auto; padding: 40px; border-radius: 15px; width: 80%; max-width: 800px; position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
-
         .close-btn { position: absolute; top: 20px; font-size: 40px; cursor: pointer; color: #aaa; }
         html[dir="rtl"] .close-btn { left: 30px; }
         html[dir="ltr"] .close-btn { right: 30px; }
         .close-btn:hover { color: black; }
-
         #requirements-list { margin-top: 20px; font-size: 1.3rem; line-height: 1.8; }
         html[dir="rtl"] #requirements-list { padding-right: 30px; }
         html[dir="ltr"] #requirements-list { padding-left: 30px; }
         #requirements-list li { margin-bottom: 15px; }
-
         .modal-actions { margin-top: 40px; display: flex; gap: 20px; justify-content: center; }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -70,24 +113,33 @@
 </head>
 <body>
 
-    <button id="lang-toggle" class="lang-btn">Français</button>
-
     <header class="kiosk-header">
-        <h1 id="ui-main-title">البوابة الإلكترونية للحالة المدنية</h1>
+        <button id="lang-toggle" class="lang-btn">Français</button>
+        <h1 id="ui-main-title">عمالة خريبكة</h1>
         <p id="ui-sub-title">دليل المواطن في قضايا الحالة المدنية - المحكمة الابتدائية</p>
     </header>
 
     <main class="kiosk-container">
-        <section id="category-section" class="active-section">
+        
+        <section id="landing-section" class="active-section landing-layout">
+            <img src="image.jpeg" alt="Province de Khouribga Logo" class="landing-logo">
+            <div class="landing-title" id="ui-landing-title">مرحبًا بكم في بوابة الحالة المدنية</div>
+            <div class="landing-desc" id="ui-landing-desc">خدمة رقمية لتسهيل الولوج إلى الوثائق والخدمات الإدارية بكل سهولة وأمان.</div>
+            <button id="btn-start" class="start-btn">التالي > </button>
+        </section>
+
+        <section id="category-section" class="hidden-section">
+            <button id="back-to-home" class="btn-secondary">الرئيسية</button>
             <h2 id="ui-step1-title">1. يرجى اختيار نوع الخدمة:</h2>
             <div id="categories-grid" class="btn-grid"></div>
         </section>
 
         <section id="services-section" class="hidden-section">
-            <button id="back-to-categories" class="btn-secondary">🔙 رجوع للرئيسية</button>
+            <button id="back-to-categories" class="btn-secondary">🔙 رجوع</button>
             <h2 id="selected-category-title">2. اختر الطلب:</h2>
             <div id="services-grid" class="btn-grid"></div>
         </section>
+
     </main>
 
     <div id="requirements-modal" class="modal">
@@ -295,10 +347,14 @@
 
         const uiTranslations = {
             ar: {
-                mainTitle: "البوابة الإلكترونية للحالة المدنية",
+                mainTitle: "عمالة خريبكة",
                 subTitle: "دليل المواطن في قضايا الحالة المدنية - المحكمة الابتدائية",
+                landingTitle: "مرحبًا بكم في بوابة الحالة المدنية",
+                landingDesc: "خدمة رقمية لتسهيل الولوج إلى الوثائق والخدمات الإدارية بكل سهولة وأمان.",
+                startBtn: "التالي ⬅️",
                 step1: "1. يرجى اختيار نوع الخدمة:",
-                backBtn: "🔙 رجوع للرئيسية",
+                backHomeBtn: "🏠 الرئيسية",
+                backBtn: "🔙 رجوع",
                 step2Prefix: "الطلبات المتعلقة بـ: ",
                 modalPrefix: "الوثائق المطلوبة لـ: ",
                 closeBtn: "إغلاق",
@@ -306,10 +362,14 @@
                 speechIntro: "الوثائق المطلوبة هي كالتالي. "
             },
             fr: {
-                mainTitle: "Portail Électronique de l'État Civil",
+                mainTitle: "Province de Khouribga",
                 subTitle: "Guide du citoyen - Tribunal de Première Instance",
+                landingTitle: "Bienvenue sur le Portail de l'État Civil",
+                landingDesc: "Un service numérique pour faciliter l'accès aux documents et services administratifs en toute simplicité et sécurité.",
+                startBtn: "Suivant ➡️",
                 step1: "1. Veuillez choisir le type de service :",
-                backBtn: "🔙 Retour à l'accueil",
+                backHomeBtn: "🏠 Accueil",
+                backBtn: "🔙 Retour",
                 step2Prefix: "Demandes liées à : ",
                 modalPrefix: "Documents requis pour : ",
                 closeBtn: "Fermer",
@@ -323,17 +383,27 @@
 
         const htmlTag = document.getElementById('html-tag');
         const langToggleBtn = document.getElementById('lang-toggle');
+        
+        const landingSection = document.getElementById('landing-section');
         const categorySection = document.getElementById('category-section');
         const servicesSection = document.getElementById('services-section');
+        
         const categoriesGrid = document.getElementById('categories-grid');
         const servicesGrid = document.getElementById('services-grid');
+        
+        const btnStart = document.getElementById('btn-start');
+        const backHomeBtn = document.getElementById('back-to-home');
         const backBtn = document.getElementById('back-to-categories');
+        
         const selectedCategoryTitle = document.getElementById('selected-category-title');
         const modal = document.getElementById('requirements-modal');
         const modalTitle = document.getElementById('modal-title');
         const requirementsList = document.getElementById('requirements-list');
+        
         const uiMainTitle = document.getElementById('ui-main-title');
         const uiSubTitle = document.getElementById('ui-sub-title');
+        const uiLandingTitle = document.getElementById('ui-landing-title');
+        const uiLandingDesc = document.getElementById('ui-landing-desc');
         const uiStep1Title = document.getElementById('ui-step1-title');
         const uiCloseBtn = document.getElementById('close-modal-btn');
 
@@ -343,7 +413,6 @@
         }
 
         langToggleBtn.onclick = () => {
-            // Couper le son lors du changement de langue
             window.speechSynthesis.cancel();
             
             currentLang = currentLang === 'ar' ? 'fr' : 'ar';
@@ -362,11 +431,34 @@
             const t = uiTranslations[currentLang];
             uiMainTitle.innerText = t.mainTitle;
             uiSubTitle.innerText = t.subTitle;
+            uiLandingTitle.innerText = t.landingTitle;
+            uiLandingDesc.innerText = t.landingDesc;
+            btnStart.innerText = t.startBtn;
             uiStep1Title.innerText = t.step1;
+            backHomeBtn.innerText = t.backHomeBtn;
             backBtn.innerText = t.backBtn;
             uiCloseBtn.innerText = t.closeBtn;
             langToggleBtn.innerText = t.langToggle;
         }
+
+        // Navigation depuis l'accueil vers les catégories
+        btnStart.onclick = () => {
+            landingSection.className = 'hidden-section';
+            categorySection.className = 'active-section';
+        };
+
+        // Navigation depuis les catégories vers l'accueil
+        backHomeBtn.onclick = () => {
+            categorySection.className = 'hidden-section';
+            landingSection.className = 'active-section';
+        };
+
+        // Navigation depuis les services vers les catégories
+        backBtn.onclick = () => {
+            selectedCategoryObj = null;
+            servicesSection.className = 'hidden-section';
+            categorySection.className = 'active-section';
+        };
 
         function renderCategories() {
             categoriesGrid.innerHTML = '';
@@ -415,12 +507,6 @@
             });
         }
 
-        backBtn.onclick = () => {
-            selectedCategoryObj = null;
-            servicesSection.className = 'hidden-section';
-            categorySection.className = 'active-section';
-        };
-
         function showRequirements(service) {
             const t = uiTranslations[currentLang];
             const title = currentLang === 'ar' ? service.title_ar : service.title_fr;
@@ -429,43 +515,73 @@
             modalTitle.innerText = t.modalPrefix + title;
             requirementsList.innerHTML = '';
             
-            // Préparer le texte à faire lire par le robot
             let textToSpeak = title + ". " + t.speechIntro;
 
             reqs.forEach((req, index) => {
                 const li = document.createElement('li');
                 li.innerText = req;
                 requirementsList.appendChild(li);
-                
-                // Ajouter chaque point au texte avec un numéro et un point pour faire une pause
                 textToSpeak += (index + 1) + ", " + req + ". ";
             });
 
             modal.style.display = 'block';
 
             // --- LECTURE VOCALE ---
-            window.speechSynthesis.cancel(); // Arrête la voix précédente si elle parlait encore
+            window.speechSynthesis.cancel(); 
             const utterance = new SpeechSynthesisUtterance(textToSpeak);
-            
-            // Définir la langue de la voix
             utterance.lang = currentLang === 'ar' ? 'ar-SA' : 'fr-FR'; 
-            
-            // Ralentir un peu la voix (0.9) pour que ce soit clair sur une borne
             utterance.rate = 0.9; 
-            
             window.speechSynthesis.speak(utterance);
         }
 
-        // Fonction pour fermer la fenêtre et couper le son
         function closeModalWindow() {
             modal.style.display = 'none';
-            window.speechSynthesis.cancel(); // Coupe le son quand on ferme
+            window.speechSynthesis.cancel(); 
+            
+            // Retourner à l'écran d'accueil automatiquement quand on ferme la liste (optionnel pour les bornes)
+            // selectedCategoryObj = null;
+            // servicesSection.className = 'hidden-section';
+            // landingSection.className = 'active-section';
         }
 
         document.getElementById('close-modal').onclick = closeModalWindow;
         uiCloseBtn.onclick = closeModalWindow;
 
         init();
+        // ==========================================
+        // SYSTEME DE RETOUR AUTOMATIQUE (INACTIVITÉ)
+        // ==========================================
+        let inactivityTimer;
+        const TIME_OUT_MS = 120000; // 120 000 millisecondes = 2 minutes
+
+        function resetKiosk() {
+            // 1. Fermer la modale si elle est ouverte
+            modal.style.display = 'none';
+            
+            // 2. Couper le son si le robot parle encore
+            window.speechSynthesis.cancel(); 
+            
+            // 3. Réinitialiser la navigation
+            selectedCategoryObj = null;
+            servicesSection.className = 'hidden-section';
+            categorySection.className = 'hidden-section';
+            landingSection.className = 'active-section'; // Retour à l'écran du logo
+        }
+
+        function resetTimer() {
+            clearTimeout(inactivityTimer);
+            // On ne lance le chrono que si on n'est PAS déjà sur la page d'accueil
+            if (!landingSection.classList.contains('active-section')) {
+                inactivityTimer = setTimeout(resetKiosk, TIME_OUT_MS);
+            }
+        }
+
+        // Écouter chaque interaction de l'utilisateur sur l'écran tactile
+        window.onload = resetTimer;
+        document.onmousemove = resetTimer;
+        document.onkeypress = resetTimer;
+        document.ontouchstart = resetTimer; // Très important pour les écrans tactiles
+        document.onclick = resetTimer;
     </script>
 </body>
 </html>
